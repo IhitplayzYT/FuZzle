@@ -6,11 +6,15 @@ pub mod Helper{
     const DBG_STR: &str = "";
     const OK:i32 = 0;
     const ERR:i32 = -1;
+    pub const PLAYERS:&str = "[PLAYERS]";
+    pub const STRATEGIES:&str = "[STRATEGIES]";
+
 
 
     #[derive(Debug,Clone)]
     pub struct CLI{
-        pub dbg: bool
+        pub dbg: bool,
+        pub path: Option<String>
     }
 
 
@@ -22,7 +26,7 @@ pub mod Helper{
 
     impl CLI{
         pub fn new() -> Self{
-            Self {dbg: false  }
+            Self {dbg: false,path:None}
         }
 
         pub fn Parse_Args(&mut self){
@@ -32,7 +36,9 @@ pub mod Helper{
                     self.dbg = true;
                 } else if i == "-h" || i == "--help" || i == " --HELP" || i == "-H"{
                     Help();
-                } else{
+                } else if i.starts_with("--path=") || i.starts_with("-p="){
+                    self.path = Some(i[i.find("=").unwrap()+1..].to_string());
+                }else{
                     Help();
                 }
            } 

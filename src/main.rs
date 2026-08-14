@@ -1,6 +1,10 @@
+use std::process::exit;
+
 use crate::helper::Helper::CLI;
 
 mod helper;
+mod model;
+mod ingest;
 
 fn main() {
     let mut clargs = CLI::new();
@@ -10,5 +14,11 @@ fn main() {
         println!("{clargs:?}");
     }
 
-    println!("Hello, world!");
+    if clargs.path.is_none(){
+        eprintln!("Path to a yaml file containing the game specs is required");
+        exit(-1);
+    }
+
+
+
 }
