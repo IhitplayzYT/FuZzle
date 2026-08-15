@@ -1,5 +1,5 @@
 pub mod ingestor{
-    use std::collections::HashMap;
+    use std::{collections::HashMap, panic::PanicHookInfo, path::Path};
 
 use crate::{helper::Helper::{PLAYERS, STRATEGIES}, model::model::{Game, Player, Strategy}};
 
@@ -20,10 +20,14 @@ use crate::{helper::Helper::{PLAYERS, STRATEGIES}, model::model::{Game, Player, 
             }   
         }
 
-        if players.is_none() || strategies.is_none() || players.unwrap().len() != strategies.unwrap().len(){
-                return None;
+        if players.is_none() || strategies.is_none() || players.clone().unwrap().len() != strategies.unwrap().len(){
+            return None;
         }
-        
+
+        let players = players.unwrap().into_iter().enumerate().map(|(idx,x)| (idx,Player::new(Some(x)))).collect::<Vec<(usize,Player)>>();
+        let mut ret = Game::from_extracted(players);
+        ret.game_name = Some(if path.contains("/"){path[path.rfind("/").unwrap()+1..].to_string()} else{path.to_string()});
+        Some(ret)
     }
 
 

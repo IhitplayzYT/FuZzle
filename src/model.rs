@@ -2,7 +2,7 @@ pub mod model{
     use crate::model::model::Strategy::{Deterministic, Fuzzy};
 
     
-    #[derive(Debug,Clone,PartialEq,Eq,Hash)]
+    #[derive(Debug,Clone,PartialEq,Eq,Hash,Copy)]
     pub enum Strategy{
         Deterministic(usize),
         Fuzzy(usize,usize,usize)
@@ -46,15 +46,36 @@ pub mod model{
 
     #[derive(Debug,Clone)]
     pub struct Game{
-        player: Vec<(usize,Player)>,
-        strat_profile: Vec<Vec<Strategy>>
+        pub players: Vec<(usize,Player)>,
+        pub strat_profile: Vec<Vec<usize>>,
+        pub game_name: Option<String>
     }
 
     impl Game{
-        pub fn new(n_players: usize,n_strat:usize) -> Self{    
-            Self { player: Vec::with_capacity(n_players), strat_profile: Vec::with_capacity(n_strat.pow(n_players as u32))}
+        pub fn new(n_players: usize,n_strat:usize,name: Option<String>) -> Self{    
+            Self { players: Vec::with_capacity(n_players), strat_profile: Vec::with_capacity(n_strat.pow(n_players as u32)),game_name:name}
         }
 
+        pub fn get_strat(&self,i:usize,j:usize) -> Strategy{
+            self.players[j].1.stategies[self.strat_profile[i][j]].1
+        }
+
+
+      pub fn from_extracted(players: Vec<(usize, Player)>) -> Self {
+        let mut strat_profile: Vec<Vec<usize>> = vec![Vec::new()];
+        for (_, player) in &players {
+            let mut update = Vec::new();
+            for profile in &strat_profile {
+                for (strategy_idx, _) in &player.stategies {
+                    let mut n_profile = profile.clone();
+                    n_profile.push(*strategy_idx);
+                    update.push(n_profile);
+                }
+            }
+            strat_profile = update;
+        }
+        Self {players,strat_profile,game_name:None}
+    }
     }
 
 

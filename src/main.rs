@@ -1,6 +1,6 @@
 use std::process::exit;
 
-use crate::helper::Helper::CLI;
+use crate::{helper::Helper::CLI, ingest::ingestor::parse_file};
 
 mod helper;
 mod model;
@@ -19,6 +19,13 @@ fn main() {
         exit(-1);
     }
 
+    let game = parse_file(&clargs.path.clone().unwrap());
+    if let Some(x) = game{
+        println!("Game: {} consists of {} players",x.game_name.unwrap(),x.players.len());
+                    
 
 
+    }else{
+        panic!("Failed in Parsing a game from {}",clargs.path.unwrap())
+    }
 }
